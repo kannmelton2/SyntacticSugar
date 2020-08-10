@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace SyntacticSugar
 {
@@ -7,7 +8,21 @@ namespace SyntacticSugar
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var predators = new List<string>();
+            predators.Add("Anteater");
+            predators.Add("Termites");
+
+            var prey = new List<string>();
+            prey.Add("Carrion");
+            prey.Add("Sugar");
+
+            var bug = new Bug("Andy", "Ant", predators, prey);
+
+            Console.WriteLine($"{bug.FormalName} likes to prey on {bug.PreyList()}");
+            Console.WriteLine($"{bug.FormalName} hates {bug.PredatorList()}");
+
+            Console.WriteLine(bug.Eat("Sugar"));
+            Console.WriteLine(bug.Eat("plastic"));
         }
         public class Bug
         {
@@ -23,13 +38,7 @@ namespace SyntacticSugar
             public List<string> Prey { get; } = new List<string>();
 
             // Convert this readonly property to an expression member
-            public string FormalName
-            {
-                get
-                {
-                    return $"{this.Name} the {this.Species}";
-                }
-            }
+            public string FormalName => $"{this.Name} the {this.Species}";
 
             // Class constructor
             public Bug(string name, string species, List<string> predators, List<string> prey)
@@ -41,31 +50,13 @@ namespace SyntacticSugar
             }
 
             // Convert this method to an expression member
-            public string PreyList()
-            {
-                var commaDelimitedPrey = string.Join(",", this.Prey);
-                return commaDelimitedPrey;
-            }
+            public string PreyList() => string.Join(", ", this.Prey);
 
             // Convert this method to an expression member
-            public string PredatorList()
-            {
-                var commaDelimitedPredators = string.Join(",", this.Predators);
-                return commaDelimitedPredators;
-            }
+            public string PredatorList() => string.Join(", ", this.Predators);
 
             // Convert this to expression method
-            public string Eat(string food)
-            {
-                if (this.Prey.Contains(food))
-                {
-                    return $"{this.Name} ate the {food}.";
-                }
-                else
-                {
-                    return $"{this.Name} is still hungry.";
-                }
-            }
+            public string Eat(string food) => Prey.Contains(food) ? $"{this.Name} ate the {food}." : $"{this.Name} is still hungry.";
         }
     }
 }
